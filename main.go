@@ -15,44 +15,44 @@ import (
 	//"reflect"
 )
 
-func Set(x, y int, c color.Color, p *image.Paletted) *image.Paletted {
-	//fmt.Println("1......")
-	if !(image.Point{x, y}.In(p.Rect)) {
-		return p
-	}
-	i := p.PixOffset(x, y)
-	p.Pix[i] = uint8(Index(c, p.Palette))
-	return p
-}
-
-func Index(c color.Color, p color.Palette) int {
-	// A batch version of this computation is in image/draw/draw.go.
-	var mod uint8 = 51
-	var splitNum = 255/mod + 1
-	cr, cg, cb, ca := c.RGBA()
-	cr8, cg8, cb8, ca8 := uint8(cr), uint8(cg), uint8(cb), uint8(ca)
-	ri, gi, bi, ai := cr8/mod, cg8/mod, cb8/mod, ca8/mod
-	rm, gm, bm, am := cr8%mod, cg8%mod, cb8%mod, ca8%mod
-	if rm > mod/2 {
-		ri += 1
-	}
-	if gm > mod/2 {
-		gi += 1
-	}
-	if bm > mod/2 {
-		bi += 1
-	}
-	if am > mod/2 {
-		ai += 1
-	}
-	//ret := int(ri * 36 + gi * 6 + bi)
-	ret := int(ri*splitNum*splitNum + gi*6 + bi)
-	return ret
-}
-func sqDiff(x, y uint32) uint32 {
-	d := x - y
-	return (d * d) >> 2
-}
+//func Set(x, y int, c color.Color, p *image.Paletted) *image.Paletted {
+//	//fmt.Println("1......")
+//	if !(image.Point{x, y}.In(p.Rect)) {
+//		return p
+//	}
+//	i := p.PixOffset(x, y)
+//	p.Pix[i] = uint8(Index(c, p.Palette))
+//	return p
+//}
+//
+//func Index(c color.Color, p color.Palette) int {
+//	// A batch version of this computation is in image/draw/draw.go.
+//	var mod uint8 = 51
+//	var splitNum = 255/mod + 1
+//	cr, cg, cb, ca := c.RGBA()
+//	cr8, cg8, cb8, ca8 := uint8(cr), uint8(cg), uint8(cb), uint8(ca)
+//	ri, gi, bi, ai := cr8/mod, cg8/mod, cb8/mod, ca8/mod
+//	rm, gm, bm, am := cr8%mod, cg8%mod, cb8%mod, ca8%mod
+//	if rm > mod/2 {
+//		ri += 1
+//	}
+//	if gm > mod/2 {
+//		gi += 1
+//	}
+//	if bm > mod/2 {
+//		bi += 1
+//	}
+//	if am > mod/2 {
+//		ai += 1
+//	}
+//	//ret := int(ri * 36 + gi * 6 + bi)
+//	ret := int(ri*splitNum*splitNum + gi*6 + bi)
+//	return ret
+//}
+//func sqDiff(x, y uint32) uint32 {
+//	d := x - y
+//	return (d * d) >> 2
+//}
 func If(condition bool, trueVal, falseVal interface{}) interface{} {
 	if condition {
 		return trueVal
@@ -76,7 +76,7 @@ func main() {
 	//img := subimg.(*image.RGBA)
 
 	dataInfo := make(map[string]int)
-	var modNum uint8 = 10
+	var modNum uint8 = 5
 	for i := imgBounds.Min.X; i < w; i++ {
 		for j := imgBounds.Min.Y; j < h; j++ {
 			startIndex := (j*w + i) << 2
@@ -109,7 +109,7 @@ func main() {
 		}
 	}
 
-	fmt.Println("dataInfo_len:", len(dataInfo))
+	//fmt.Println("dataInfo_len:", len(dataInfo))
 	dataMaps := make(map[string]string)
 	// 压缩到256个
 	var dataKeys []string
@@ -121,7 +121,7 @@ func main() {
 	sort.Strings(dataKeys)
 	//sort.Ints(dataValues)
 	sort.Sort(sort.Reverse(sort.IntSlice(dataValues)))
-	fmt.Println("dataKeys:", dataKeys)
+	//fmt.Println("dataKeys:", dataKeys)
 	thred := dataValues[255]
 	repeatNum := 1
 	// 判定重复数量
@@ -132,8 +132,8 @@ func main() {
 			break
 		}
 	}
-	fmt.Println("dataValues:", dataValues)
-	fmt.Println("thred:", thred)
+	//fmt.Println("dataValues:", dataValues)
+	//fmt.Println("thred:", thred)
 	lastKey := ""
 	var leaveKeys []string
 	dataIds := make(map[string]int)
@@ -164,7 +164,7 @@ func main() {
 			newImg.Palette = append(newImg.Palette, color.RGBA{uint8(rv), uint8(bv), uint8(gv), uint8(av)})
 			dataMaps[dataK] = dataK
 			dataIds[dataK] = ids
-			fmt.Println("ids:", ids, dataK, dataInfo[dataK], "[", rv, bv, gv, av, "]")
+			//fmt.Println("ids:", ids, dataK, dataInfo[dataK], "[", rv, bv, gv, av, "]")
 			ids += 1
 			lastKey = dataK
 			leaveKeys = nil
@@ -176,7 +176,7 @@ func main() {
 			}
 		}
 	}
-	fmt.Println("dataMaps:", len(newImg.Palette))
+	//fmt.Println("dataMaps:", len(newImg.Palette))
 	for i := imgBounds.Min.X; i < w; i++ {
 		for j := imgBounds.Min.Y; j < h; j++ {
 			startIndex := (j*w + i) << 2
@@ -221,7 +221,7 @@ func main() {
 		//	break
 		//}
 	}
-	fmt.Println(newImg.Palette)
+	//fmt.Println(newImg.Palette)
 	filew, err := os.Create("2.png")
 	defer filew.Close()
 	err = png.Encode(filew, newImg)
